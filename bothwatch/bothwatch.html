@@ -1,5 +1,5 @@
 <head>
-  <title>bothwatch</title>
+  <title>VideoPair</title>
 </head>
 
 <body>
@@ -9,9 +9,15 @@
 <template name="videoTag">
   {{#if videoSrc}}
   <video style="width: 100%" src="{{videoSrc}}" controls></video>
-  <p>Consensus location: {{consensusLocation}}</p>
+  <p>The movie is ready & synchronized! <strong>Get headphones</strong> to avoid echo.</p>
+  <p>I suggest joining a video call, too. Use a separate window for that so you can organize them both on your screen.</p>
+  <h3>How movie synchronization works</h3>
+  <ul>
+    <li>Whoever clicks play/pause will make it play/pause for everyone.</li>
+    <li>Whenever someone clicks pause, and the movie pauses for all, the synchronization software will make sure everyone is at the same video timestamp. The earliest timestamp wins.</li>
+  </ul>
   {{else}}
-  <h1>Welcome to bothwatch!</h1>
+  <h1>Welcome to VideoPair!</h1>
   <h3>How to get started</h3>
   <ol>
     <li>Upload a video somewhere, like a Davros grain with static publishing</li>

@@ -1,6 +1,18 @@
 // Info about the one video.
 CurrentTime = new Mongo.Collection("currentLocation");
+var yeasayer = function() { return true; };
+CurrentTime.allow({
+  update: yeasayer,
+  remove: yeasayer,
+  insert: yeasayer,
+});
+
 VideoSrc = new Mongo.Collection("videoSrc");
+VideoSrc.allow({
+  update: yeasayer,
+  remove: yeasayer,
+  insert: yeasayer,
+});
 var THE_ONLY_ONE = "the only one";
 
 if (Meteor.isClient) {

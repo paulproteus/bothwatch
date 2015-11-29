@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Watch a video with me</title>
+        <script src="http://code.jquery.com/jquery-1.4.4.js"></script>
+        <script src="http://js.peerbind.com/jQuery.peerbind.js"></script>
+    </head>
+    <body>
+  <body onload="" id="stage" class="theme">
+        <video id="video" width="100%" height="92%">
+                <source src="http://debdev.xvm.mit.edu/~paulproteus/video2.webm"></source>
+        </video>
+<a href="#" id="play_at_min">play</a>
+<a href="#" id="pause">pause</a>
+<script>
+
+    // move the movie to the min of the last-known
+    
+// when the user clicks play, send a broadcast message to find out
+// what time the other side is at. 
+   
+// implementation:
+// every 1-second, call peerTrigger to tell the other side what time
+// we have seen.
+
+// optional optimization: if the video is paused, de-register that
+// timeout.
+
+// then when a custom "play" button gets clicked,
+// 1) calculate the min() of the last-broadcast time or my current time
+// 2) jump there, and play
+// 3) ask the other side to do the same using peerTrigger, sending the time
+//    to go to.
+
+// there's an alternate version that involves peerTrigger doing a two-stage
+// process: request for broadcast of current time, and then play works
+// differently.
+
+// bug: if someone scrolls back in time, this could miss it. that
+// totally sucks. We could make the "play" button detect that, actually,
+// and broadcast the time as the local client hits play.
+
+// fix: http://help.videojs.com/discussions/problems/400-api-and-event-tracking
+// bind seek, and send a custom peerTrigger
+
+// note that you can also listen to the timeupdate event to avoid the polling
+</script>
+
+    </body>
+    <script type="text/javascript" src="script.js"></script>
+</html>

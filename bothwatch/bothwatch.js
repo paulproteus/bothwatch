@@ -45,15 +45,10 @@ if (Meteor.isClient) {
       return;
     }
 
-    alert(initialCurrentTime.location);
-    video.currentTime = initialCurrentTime.location;
+    video.currentTime = (1.0 * initialCurrentTime.location);
     hasSetLocationOnce = true;
     console.log("Initialized.");
   }
-
-  Meteor.subscribe('serverCurrentTime', function() {
-    moveVideo();
-  });
 
   var moveVideo = function() {
     setInitialLocation();

@@ -1,5 +1,7 @@
-// One data model: e current video.
+// Info about the one video.
 CurrentTime = new Mongo.Collection("currentLocation");
+VideoSrc = new Mongo.Collection("videoSrc");
+var THE_ONLY_ONE = "the only one";
 
 if (Meteor.isClient) {
   var hasSetLocationOnce = false;
@@ -43,6 +45,7 @@ if (Meteor.isClient) {
       return;
     }
 
+    alert(initialCurrentTime.location);
     video.currentTime = initialCurrentTime.location;
     hasSetLocationOnce = true;
     console.log("Initialized.");
@@ -62,6 +65,9 @@ if (Meteor.isClient) {
     }
 
     var nowCurrentTime = CurrentTime.findOne({});
+    if (!nowCurrentTime) {
+      return;
+    }
     var videoIsPlaying = ! video.paused;
 
     if (nowCurrentTime.status === 'playing') {
@@ -83,7 +89,7 @@ if (Meteor.isClient) {
       // If we got a pause event, and we are behind, then we should tell others
       // to rewind to where we are.
       if (nowCurrentTime.location > video.currentTime) {
-        CurrentTime.update({_id: "the only one"},
+        CurrentTime.update({_id: THE_ONLY_ONE},
                            {$set: {
                              location: video.currentTime}});
       } else {
@@ -101,7 +107,7 @@ if (Meteor.isClient) {
     removed: moveVideo
   });
 
-  Template.showLocation.helpers({
+  Template.videoTag.helpers({
     consensusLocation: function() {
       var loc = CurrentTime.findOne({});
       if (loc && loc.location) {
@@ -122,18 +128,35 @@ if (Meteor.isClient) {
     Meteor.subscribe('serverCurrentTime', moveVideo);
   });
 
+  Template.videoTag.onCreated(function() {
+    Meteor.subscribe("serverVideoSrc");
+  });
+
+  Template.videoTag.helpers({
+    'videoSrc': function() {
+      var obj = VideoSrc.findOne({_id: THE_ONLY_ONE});
+      return (obj && obj.src);
+    }});
+
   Template.videoTag.events({
+    'click button': function() {
+      var url = document.getElementsByClassName('url')[0].value.trim();
+      if (url) {
+        VideoSrc.insert({_id: THE_ONLY_ONE, src: url});
+      }
+    },
+
     'play video': function() {
       // For some reason we're playing. So broadcast our new status of
       // playing.
-      CurrentTime.update({_id: "the only one"},
+      CurrentTime.update({_id: THE_ONLY_ONE},
                          {$set: {status: 'playing'}});
     },
     'pause video': function() {
       // For some reason we're paused. Maybe we clicked pause, or
       // maybe we are paused due to handling a reactive mongo update.
       var video = document.getElementsByTagName('video')[0];
-      var nowCurrentTime = CurrentTime.findOne({_id: "the only one"});
+      var nowCurrentTime = CurrentTime.findOne({_id: THE_ONLY_ONE});
 
       // Do a broadcast of our video time if one of:
       //
@@ -146,7 +169,7 @@ if (Meteor.isClient) {
       var weAreBehind = (video.currentTime < nowCurrentTime.location);
       shouldBroadcastOurTime = (weClicked) || (weAreBehind && ! weClicked);
       if (shouldBroadcastOurTime) {
-        CurrentTime.update({_id: "the only one"},
+        CurrentTime.update({_id: THE_ONLY_ONE},
                            {$set: {location: video.currentTime,
                                    status: 'paused'}});
       }
@@ -158,11 +181,14 @@ if (Meteor.isServer) {
 
   Meteor.startup(function () {
     if (CurrentTime.find({}).count() === 0) {
-      CurrentTime.insert({_id: "the only one"});
+      CurrentTime.insert({_id: THE_ONLY_ONE});
     }
   });
 
   Meteor.publish('serverCurrentTime', function() {
     return CurrentTime.find();
+  });
+  Meteor.publish('serverVideoSrc', function() {
+    return VideoSrc.find();
   });
 }

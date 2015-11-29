@@ -3,16 +3,21 @@
 </head>
 
 <body>
-  <h1>Welcome to bothwatch!</h1>
-
   {{> videoTag}}
-  {{> showLocation}}
 </body>
 
 <template name="videoTag">
-  <video style="width: 100%" src="/video.mp4" controls></video>
-</template>
-
-<template name="showLocation">
+  {{#if videoSrc}}
+  <video style="width: 100%" src="{{videoSrc}}" controls></video>
   <p>Consensus location: {{consensusLocation}}</p>
+  {{else}}
+  <h1>Welcome to bothwatch!</h1>
+  <h3>How to get started</h3>
+  <ol>
+    <li>Upload a video somewhere, like a Davros grain with static publishing</li>
+    <li>Paste the URL <input class="url" type="text" width="40" placeholder="in this box"> then <button type="submit">submit</button>
+      <div style="margin-top: 1em;">You can use this sample video URL if you like: https://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4</div>
+    </li>
+  </ol>
+  {{/if}}
 </template>
